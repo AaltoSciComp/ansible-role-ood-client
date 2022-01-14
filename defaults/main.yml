@@ -1,0 +1,17 @@
+---
+
+disable_gpg_check_rpm_repo: true
+
+ood_vnc_rpms:
+  - nmap-ncat
+  - python-websockify
+  - turbovnc
+
+symlink_files:
+  - /opt/TurboVNC/bin/checkshmpixmaps
+  - /opt/TurboVNC/bin/vncconnect
+  - /opt/TurboVNC/bin/vncpasswd
+  - /opt/TurboVNC/bin/vncserver
+  - /opt/TurboVNC/bin/Xvnc
+
+install_xfce: false

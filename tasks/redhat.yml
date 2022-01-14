@@ -1,0 +1,81 @@
+---
+
+- name: Include distribution variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_os_family }}.yml"
+  tags: [ 'always' ]
+
+
+- name: Enable OSC repository
+  yum:
+    name: "{{ osc_release_rpm }}"
+    state: present
+    disable_gpg_check: "{{ disable_gpg_check_rpm_repo | bool }}"
+
+- name: Install ood rpms for vnc
+  package:
+    name: "{{ item }}"
+    state: latest
+  loop: "{{ ood_vnc_rpms }}"
+
+- name: Symlink vnc bins for simplicity
+  file:
+    src: "{{ item }}"
+    path: "/usr/bin/{{ item | basename }}"
+    state: link
+  with_items: "{{ symlink_files }}"
+
+- name: Create websocify ood default path
+  file:
+    path: "/opt/websockify"
+    state: directory
+    mode: 0755
+
+- name: Symlink websocify ood default bin for simplicity
+  file:
+    src: "/usr/bin/websockify"
+    path: "/opt/websockify/run"
+    state: link
+
+- name: Make udev permission correct for DRI card
+  copy:
+    dest: /etc/udev/rules.d/50-card.rules
+    owner: root
+    group: root
+    mode: 644
+    content: 'KERNEL=="card*", NAME="dri/card%n", MODE="0666"'
+
+- name: Install Xfce when enabled
+  yum:
+    name: "@Xfce"
+    state: present
+  when: install_xfce == True
+
+- name: Revert systemd back to console if installed Xfce
+  file:
+    src: /usr/lib/systemd/system/multi-user.target
+    dest: /etc/systemd/system/default.target
+    state: link
+  when: install_xfce == True
+
+- name: Copy maximizer plugin for Xfce when enabled
+  copy:
+    src: "xfce/{{ item }}"
+    dest: "/usr/lib64/xfce4/panel/plugins/{{ item }}"
+    mode: 0644
+    owner: root
+    group: root
+  when: install_xfce == True
+  with_items:
+    - libmaximus.la
+    - libmaximus.so
+
+- name: Copy maximizer plugin conf for Xfce when enabled
+  copy:
+    src: "xfce/maximus.desktop"
+    dest: /usr/share/xfce4/panel/plugins
+    mode: 0644
+    owner: root
+    group: root
+  when: install_xfce == True
