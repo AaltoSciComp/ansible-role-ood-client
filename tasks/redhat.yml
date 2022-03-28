@@ -52,6 +52,13 @@
     state: present
   when: install_xfce == True
 
+- name: Install extra X packages
+  package:
+    name: "{{ item }}"
+    state: latest
+  loop: "{{ xfce_extra_rpms }}"
+  when: install_xfce == True
+
 - name: Revert systemd back to console if installed Xfce
   file:
     src: /usr/lib/systemd/system/multi-user.target

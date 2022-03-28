@@ -15,3 +15,6 @@ symlink_files:
   - /opt/TurboVNC/bin/Xvnc
 
 install_xfce: false
+
+xfce_extra_rpms:
+  - libXScrnSaver
