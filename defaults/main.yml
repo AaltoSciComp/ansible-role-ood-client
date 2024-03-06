@@ -1,18 +1,17 @@
 ---
 
-disable_gpg_check_rpm_repo: true
+osc_release_rpm: "https://yum.osc.edu/ondemand/3.1/ondemand-release-web-3.1-1.el9.noarch.rpm"
+
+turbovnc_repo: https://packagecloud.io/dcommander/turbovnc/rpm_any/rpm_any/$basearch
+
+turbovnc_gpg_key: https://packagecloud.io/dcommander/turbovnc/gpgkey
+
+osc_gpg_check: true
 
 ood_vnc_rpms:
   - nmap-ncat
   - python-websockify
   - turbovnc
-
-symlink_files:
-  - /opt/TurboVNC/bin/checkshmpixmaps
-  - /opt/TurboVNC/bin/vncconnect
-  - /opt/TurboVNC/bin/vncpasswd
-  - /opt/TurboVNC/bin/vncserver
-  - /opt/TurboVNC/bin/Xvnc
 
 install_xfce: false
 

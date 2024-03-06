@@ -6,25 +6,30 @@
     - "{{ ansible_os_family }}.yml"
   tags: [ 'always' ]
 
-
 - name: Enable OSC repository
   yum:
     name: "{{ osc_release_rpm }}"
     state: present
-    disable_gpg_check: "{{ disable_gpg_check_rpm_repo | bool }}"
+    disable_gpg_check: "{{ osc_gpg_check | bool }}"
+
+- name: Enable TurboVNC repository
+  ansible.builtin.yum_repository:
+    name: turbovnc
+    state: present
+    baseurl: "{{ turbovnc_repo }}"
+    gpgkey:
+      - https://packagecloud.io/dcommander/turbovnc/gpgkey
+      - https://raw.githubusercontent.com/TurboVNC/repo/main/VGL-GPG-KEY
+      - https://raw.githubusercontent.com/TurboVNC/repo/main/VGL-GPG-KEY-1024
+    gpgcheck: true
+    description: "TigerVNC repository"
+  when: turbovnc_repo | default('') | length > 0
 
 - name: Install ood rpms for vnc
   package:
     name: "{{ item }}"
     state: latest
   loop: "{{ ood_vnc_rpms }}"
-
-- name: Symlink vnc bins for simplicity
-  file:
-    src: "{{ item }}"
-    path: "/usr/bin/{{ item | basename }}"
-    state: link
-  with_items: "{{ symlink_files }}"
 
 - name: Create websocify ood default path
   file:

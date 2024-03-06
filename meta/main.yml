@@ -1,6 +1,7 @@
 ---
 galaxy_info:
-  role_name: ood-client
+  role_name: ansible_role_ood_client
+  namespace: aaltoscicomp
   author: Mikko Hakala
   description: Installs Open On Demand compute side dependencies
   company: Aalto University / FCCI consortium
