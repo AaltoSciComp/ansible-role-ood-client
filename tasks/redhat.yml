@@ -43,28 +43,28 @@
     dest: /etc/udev/rules.d/50-card.rules
     owner: root
     group: root
-    mode: 644
+    mode: 0644
     content: 'KERNEL=="card*", NAME="dri/card%n", MODE="0666"'
 
 - name: Install Xfce when enabled
   yum:
     name: "@Xfce"
     state: present
-  when: install_xfce == True
+  when: install_xfce
 
 - name: Install extra X packages
   package:
     name: "{{ item }}"
     state: latest
   loop: "{{ xfce_extra_rpms }}"
-  when: install_xfce == True
+  when: install_xfce
 
 - name: Revert systemd back to console if installed Xfce
   file:
     src: /usr/lib/systemd/system/multi-user.target
     dest: /etc/systemd/system/default.target
     state: link
-  when: install_xfce == True
+  when: install_xfce
 
 - name: Copy maximizer plugin for Xfce when enabled
   copy:
@@ -73,7 +73,7 @@
     mode: 0644
     owner: root
     group: root
-  when: install_xfce == True
+  when: install_xfce
   with_items:
     - libmaximus.la
     - libmaximus.so
@@ -85,4 +85,16 @@
     mode: 0644
     owner: root
     group: root
-  when: install_xfce == True
+  when: install_xfce
+
+- name: Disabling notification on the unregistered systems
+  ansible.builtin.lineinfile:
+    dest: "{{ item }}"
+    regexp: '^(?i)(ExecStart=/usr/libexec/gsd-subman.*)'
+    replace: '# \1'
+    backrefs: yes
+    state: present
+  loop:
+    - /lib/systemd/user/org.gnome.SettingsDaemon.Subscription.service
+    - /etc/xdg/autostart/org.gnome.SettingsDaemon.Subscription.desktop
+  when: disable_unregistered_not is defined
