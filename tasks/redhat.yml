@@ -96,5 +96,14 @@
     state: present
   loop:
     - /lib/systemd/user/org.gnome.SettingsDaemon.Subscription.service
-    - /etc/xdg/autostart/org.gnome.SettingsDaemon.Subscription.desktop
+#    - /etc/xdg/autostart/org.gnome.SettingsDaemon.Subscription.desktop In this file, it is actually Exec=/usr/libexec/gsd-subman
   when: disable_unregistered_not is defined
+
+- name: Disabling notification on the unregistered systems by setting Hidden true in /etc/xdg/autostart/org.gnome.SettingsDaemon.Subscription.desktop
+  ansible.builtin.ini_file:
+    path: /etc/xdg/autostart/org.gnome.SettingsDaemon.Subscription.desktop
+    section: "Desktop Entry"
+    option: "Hidden"
+    value: "true"
+    no_extra_spaces: true
+    backup: true
