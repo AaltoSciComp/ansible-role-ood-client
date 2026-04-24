@@ -1,0 +1,22 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    # replace these tasks with whatever you find suitable to test
+    - name: Copy something to test use of synchronize module
+      ansible.builtin.copy:
+        src: /etc/hosts
+        dest: /tmp/hosts-from-controller
+        mode: "0644"
+    - name: "Install EPEL"
+      ansible.builtin.yum:
+        name: epel-release
+        state: present
+    - name: "Create fake udev folders"
+      ansible.builtin.file:
+        path: /etc/udev/rules.d
+        state: directory
+        recurse: true
+    - name: "Include ansible-role-ood-client"
+      ansible.builtin.include_role:
+        name: "ansible-role-ood-client"
